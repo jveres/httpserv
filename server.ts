@@ -12,10 +12,10 @@ import {
 export function listen(port: number, hostname: string) {
   const listener = Deno.listen({ port, hostname });
 
-  type Handler = ({ request, searchString, urlParams }: {
+  type Handler = ({ request, urlParams, routeParams }: {
     request: Request;
-    searchString?: string;
-    urlParams?: Record<string, unknown>;
+    urlParams?: string;
+    routeParams?: Record<string, unknown>;
   }) => Response | Promise<Response>;
 
   const router: Record<string, RadixRouter<{ handler: Handler }>> = {};
@@ -28,13 +28,13 @@ export function listen(port: number, hostname: string) {
           const { value: http, done } = await req.next();
           if (done) break;
           // deno-fmt-ignore
-          const [path, searchString] = http.request.url.split(http.request.headers.get("host")!, 2)[1].split("?");
+          const [path, urlParams] = http.request.url.split(http.request.headers.get("host")!, 2)[1].split("?");
           const route = router[http.request.method].lookup(path);
           http.respondWith(
             route?.handler({
               request: http.request,
-              searchString,
-              urlParams: route.params,
+              urlParams,
+              routeParams: route.params,
             }) ||
               new Response(null, { status: 404 }),
           ).catch((_) => {});

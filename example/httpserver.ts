@@ -17,26 +17,26 @@ const server = listen(PORT, HOSTNAME);
 server.expose({
   path: "/bench",
   handler: () => {
-    return new Response("Hello from Deco!");
+    return new Response("Hello from API!");
   },
 });
 
 server.expose({
   path: "/id/:id",
   method: "POST",
-  handler: ({ searchString, urlParams }) => {
-    console.log("searchString: ", searchString);
+  handler: ({ urlParams, routeParams }) => {
     console.log("urlParams: ", urlParams);
-    return new Response("[ID] Hello from Deco!");
+    console.log("routeParams: ", routeParams);
+    return new Response("[ID] Hello from API!");
   },
 });
 
 server.expose({
   path: "/path/**",
-  handler: ({ searchString, urlParams }) => {
-    console.log("searchString: ", searchString);
+  handler: ({ urlParams, routeParams }) => {
     console.log("urlParams: ", urlParams);
-    return new Response("[PATH] Hello from Deco!");
+    console.log("routeParams: ", routeParams);
+    return new Response("[PATH] Hello from API!");
   },
 });
 
@@ -54,10 +54,9 @@ server.expose({
 
 server.expose({
   path: "/chunked",
-  // deno-lint-ignore require-await
-  handler: async () => {
+  handler: () => {
     const chunks = (async function* () {
-      yield "Hello from Deco!\n\n";
+      yield "Hello from API!\n\n";
       for (let i = 1; i <= 10; i++) {
         await delay(1000);
         yield i + "\n\n";
@@ -102,7 +101,7 @@ server.expose({
     const { socket, response } = Deno.upgradeWebSocket(request);
     socket.onopen = async () => {
       console.log("websocket connected");
-      socket.send("Hello from Deco!");
+      socket.send("Hello from API!");
       try {
         for await (const data of stream) {
           if (socket.readyState === WebSocket.OPEN) socket.send(data);
