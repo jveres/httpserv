@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "example": "cd example && deno run -A --watch httpserver.ts",
+    "bench": "wrk -c150 -d10s http://127.0.0.1:8080/bench"
+  }
+}
